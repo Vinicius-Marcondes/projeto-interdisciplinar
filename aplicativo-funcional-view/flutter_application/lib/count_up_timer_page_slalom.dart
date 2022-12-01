@@ -1,0 +1,395 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application/rounded_button.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'dart:async';
+import 'package:flutter_application/confronto/confronto_envio.dart';
+
+import 'confronto/Confronto.dart';
+
+class CountUpTimerPageSlalom extends StatefulWidget {
+  /*
+  final String? equipeUmRecebido;
+  final String? equipeDoisRecebido;
+  final String? rodadaRecebido;
+  final String? competicacaoRecebido;
+
+  CountUpTimerPage(
+      {Key? key,
+      this.equipeUmRecebido,
+      this.equipeDoisRecebido,
+      this.rodadaRecebido,
+      this.competicacaoRecebido})
+      : super(key: key);
+      */
+  static Future<void> navigatorPush(BuildContext context) async {
+    return Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CountUpTimerPageSlalom(),
+      ),
+    );
+  }
+
+  @override
+  _State createState() => _State();
+}
+
+class _State extends State<CountUpTimerPageSlalom> {
+  final _isHours = true;
+
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+    mode: StopWatchMode.countUp,
+    onChange: (value) => print('onChange $value'),
+    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+    onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+    onStopped: () {
+      print('onStop');
+    },
+    onEnded: () {
+      print('onEnded');
+    },
+  );
+
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _stopWatchTimer.rawTime.listen((value) =>
+        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+    _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
+    _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
+    _stopWatchTimer.records.listen((value) => print('records $value'));
+    _stopWatchTimer.fetchStopped
+        .listen((value) => print('stopped from stream'));
+    _stopWatchTimer.fetchEnded.listen((value) => print('ended from stream'));
+
+    /// Can be set preset time. This case is "00:01.23".
+    // _stopWatchTimer.setPresetTime(mSec: 1234);
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _stopWatchTimer.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cronometro Slalom'),
+      ),
+      body: Scrollbar(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 32,
+              horizontal: 16,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                /// Display stop watch time
+                StreamBuilder<int>(
+                  stream: _stopWatchTimer.rawTime,
+                  initialData: _stopWatchTimer.rawTime.value,
+                  builder: (context, snap) {
+                    final value = snap.data!;
+                    final displayTime =
+                        StopWatchTimer.getDisplayTime(value, hours: _isHours);
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            displayTime,
+                            style: const TextStyle(
+                                fontSize: 40,
+                                fontFamily: 'Helvetica',
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            value.toString(),
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Helvetica',
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+
+                /// Display every minute.
+                StreamBuilder<int>(
+                  stream: _stopWatchTimer.minuteTime,
+                  initialData: _stopWatchTimer.minuteTime.value,
+                  builder: (context, snap) {
+                    final value = snap.data;
+                    print('Listen every minute. $value');
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    'minute',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontFamily: 'Helvetica',
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    value.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 30,
+                                        fontFamily: 'Helvetica',
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ],
+                    );
+                  },
+                ),
+
+                /// Display every second.
+                StreamBuilder<int>(
+                  stream: _stopWatchTimer.secondTime,
+                  initialData: _stopWatchTimer.secondTime.value,
+                  builder: (context, snap) {
+                    final value = snap.data;
+                    print('Listen every second. $value');
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    'second',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontFamily: 'Helvetica',
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    value.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontFamily: 'Helvetica',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ],
+                    );
+                  },
+                ),
+
+                /// Lap time.
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: SizedBox(
+                    height: 100,
+                    child: StreamBuilder<List<StopWatchRecord>>(
+                      stream: _stopWatchTimer.records,
+                      initialData: _stopWatchTimer.records.value,
+                      builder: (context, snap) {
+                        final value = snap.data!;
+                        if (value.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeOut);
+                        });
+                        print('Listen records. $value');
+                        return ListView.builder(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            final data = value[index];
+                            return Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text(
+                                    '${index + 1} ${data.displayTime}',
+                                    style: const TextStyle(
+                                        fontSize: 17,
+                                        fontFamily: 'Helvetica',
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                const Divider(
+                                  height: 1,
+                                )
+                              ],
+                            );
+                          },
+                          itemCount: value.length,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                /// Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: RoundedButton(
+                        color: Colors.lightBlue,
+                        onTap: _stopWatchTimer.onStartTimer,
+                        child: const Text(
+                          'Começar',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: RoundedButton(
+                        color: Colors.green,
+                        onTap: _stopWatchTimer.onStopTimer,
+                        child: const Text(
+                          'Parar',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RoundedButton(
+                              color: Colors.red,
+                              onTap: _stopWatchTimer.onResetTimer,
+                              child: const Text(
+                                'Resetar',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 60, // <-- SEE HERE
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(0).copyWith(right: 0),
+                        child: RoundedButton(
+                          color: Colors.deepPurpleAccent,
+                          onTap: _stopWatchTimer.onAddLap,
+                          child: const Text(
+                            'Tempo Equipe',
+                            style: TextStyle(color: Colors.white, fontSize: 40),
+                          ),
+                        ),
+                      ),
+                    ]),
+
+                SizedBox(
+                  height: 50, // <-- SEE HERE
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(0).copyWith(right: 50),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pushNamed(context, '/profile_confronto');
+                          },
+                          child: const Text('Voltar'),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(0).copyWith(right: 0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _futureConfronto = createConfronto(
+                                  "equipeUmEnviar"!,
+                                  "equipeDoisEnviar"!,
+                                  "competicaoEnviar"!,
+                                  "rodadaEnviar"!,
+                                  "",
+                                  "");
+                            });
+                            Navigator.pop(context);
+                            Navigator.pushNamed(
+                                context, '/profile_confronto_sucesso');
+                          },
+                          child: const Text('Enviar'),
+                        ),
+                      )
+                    ]),
+
+                SizedBox(
+                  height: 10, // <-- SEE HERE
+                ),
+                /*
+                new Text(competicaoEnviar!),
+                new Text(rodadaEnviar!),
+                */
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Future<Confronto>? _futureConfronto;
+
+final TextEditingController _controller = TextEditingController();
+/*
+String? equipeUmEnviar = CountUpTimerPage().equipeUmRecebido;
+String? equipeDoisEnviar = CountUpTimerPage().equipeDoisRecebido;
+String? rodadaEnviar = CountUpTimerPage().rodadaRecebido;
+String? competicaoEnviar = CountUpTimerPage().competicacaoRecebido;
+*/

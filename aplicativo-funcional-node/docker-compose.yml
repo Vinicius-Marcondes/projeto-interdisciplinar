@@ -1,0 +1,21 @@
+version: '3.9'
+
+services: 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-nodejs-local-db
+    hostname: nodejs-dev
+    environment:
+      MYSQL_DATABASE: nodejs
+      MYSQL_USER: nodejs
+      MYSQL_PASSWORD: qwe123
+      MYSQL_ROOT_PASSWORD: qwe123
+    volumes:
+      - nodejs-volume:/var/lib/mysql
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - "3307:3306"
+    restart: always
+
+volumes:
+  nodejs-volume:
