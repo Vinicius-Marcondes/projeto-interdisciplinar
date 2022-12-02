@@ -1,0 +1,43 @@
+﻿<!-- nav -->
+<nav class="navbar navbar-expand navbar-dark bg-utp">
+  <div class="navbar-nav">
+    <a class="navbar-brand" href="#">
+      <img
+        src="../assets/logo.svg"
+        width="150"
+        height="50"
+        class="d-inline-block align-top"
+        alt=""
+      />
+    </a>
+
+    <a
+      class="nav-item nav-link"
+      routerLink="/"
+      routerLinkActive="active"
+      style="margin-top: 8px"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a
+      class="nav-item nav-link"
+      style="margin-top: 8px"
+      routerLink="/equipes"
+      routerLinkActive="active"
+      >Equipe</a
+    >
+  </div>
+</nav>
+
+<!-- main app container -->
+<div class="app-container bg-light">
+  <alert></alert>
+  <router-outlet></router-outlet>
+</div>
+
+<!-- credits -->
+<div class="text-center mt-4">
+  <p>
+    <a href="https://utp.edu.br" target="_top">Universidade Tuiuti do Paraná</a>
+  </p>
+</div>

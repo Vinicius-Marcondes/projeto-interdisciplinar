@@ -1,0 +1,42 @@
+<h3>Participantes</h3>
+<a routerLink="addParticipante" class="btn btn-sm btn-success mb-2">Novo</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="width: 5%">Id</th>
+      <th style="width: 30%">Nome</th>
+      <th style="width: 10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let participante of participantes">
+      <td>
+        {{ participante.id }}
+      </td>
+      <td>{{ participante.nome }}</td>
+      <td style="white-space: nowrap">
+        <a
+          routerLink="edit/{{ participante.id }}"
+          class="btn btn-sm btn-primary mr-1"
+          >Editar</a
+        >
+        <button
+          (click)="deleteParticipante(participante.id)"
+          class="btn btn-sm btn-danger btn-delete-user"
+          [disabled]="participante.isDeleting"
+        >
+          <span
+            *ngIf="participante.isDeleting"
+            class="spinner-border spinner-border-sm"
+          ></span>
+          <span *ngIf="!participante.isDeleting">Deletar</span>
+        </button>
+      </td>
+    </tr>
+    <tr *ngIf="!participantes">
+      <td colspan="4" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </td>
+    </tr>
+  </tbody>
+</table>

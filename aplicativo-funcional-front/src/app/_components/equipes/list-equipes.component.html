@@ -1,0 +1,46 @@
+<h1>Equipes</h1>
+<a routerLink="add" class="btn btn-sm btn-success mb-2">Adicionar equipe</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="width: 5%">Brazão</th>
+      <th style="width: 30%">Nome</th>
+      <th style="width: 10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let equipe of equipes">
+      <td>
+        <img
+          *ngIf="equipe.icone"
+          [src]="equipe.icone"
+          width="150px"
+          height="150px"
+          alt="Brasão da equipe"
+        />
+      </td>
+      <td>{{ equipe.nome }}</td>
+      <td style="white-space: nowrap">
+        <a routerLink="edit/{{ equipe.id }}" class="btn btn-sm btn-primary mr-1"
+          >Editar</a
+        >
+        <button
+          (click)="deleteEquipe(equipe.id)"
+          class="btn btn-sm btn-danger btn-delete-user"
+          [disabled]="equipe.isDeleting"
+        >
+          <span
+            *ngIf="equipe.isDeleting"
+            class="spinner-border spinner-border-sm"
+          ></span>
+          <span *ngIf="!equipe.isDeleting">Deletar</span>
+        </button>
+      </td>
+    </tr>
+    <tr *ngIf="!equipes">
+      <td colspan="4" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,71 @@
+<h1 *ngIf="isAddMode">Adicionar equipe</h1>
+<h1 *ngIf="!isAddMode">Editar equipe</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-row">
+    <label>Brazão</label>
+    <input type="file" class="form-control" (change)="onFileSelected($event)" />
+    <img
+      *ngIf="brasaoEquipe"
+      [src]="brasaoEquipe"
+      width="300px"
+      height="300px"
+      alt="Brasão da equipe"
+    />
+  </div>
+  <div class="form-group">
+    <label>Nome</label>
+    <input
+      type="text"
+      formControlName="nome"
+      class="form-control"
+      width="100%"
+      [ngClass]="{ 'is-invalid': submitted && f.nome.errors }"
+    />
+    <div *ngIf="submitted && f.nome.errors" class="invalid-feedback">
+      <div *ngIf="f.nome.errors.required">Nome da equipe é obrigatório</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Número do veículo</label>
+    <input
+      type="text"
+      [maxLength]="3"
+      formControlName="numero"
+      class="form-control"
+      width="100%"
+      [ngClass]="{ 'is-invalid': submitted && f.nome.errors }"
+    />
+    <div *ngIf="submitted && f.numero.errors" class="invalid-feedback">
+      <div *ngIf="f.numero.errors.required">Número do veículo obrigatório.</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Penalidade</label>
+    <input
+      type="number"
+      formControlName="penalidade"
+      class="form-control"
+      [ngClass]="{ 'is-invalid': submitted && f.penalidade.errors }"
+    />
+    <div *ngIf="submitted && f.penalidade.errors" class="invalid-feedback">
+      <div *ngIf="f.penalidade.errors.required">
+        O preenchimento da penalidade é obrigatório
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isAddMode" class="form-group">
+    <list-participantes id_equipe="{{ this.id }}"></list-participantes>
+  </div>
+  <div class="form-group">
+    <button [disabled]="loading" class="btn btn-primary">
+      <span
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm mr-1"
+      ></span>
+      Salvar
+    </button>
+    <a routerLink="/equipes" class="btn btn-link">Cancelar</a>
+  </div>
+</form>

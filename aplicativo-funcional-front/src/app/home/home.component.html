@@ -1,0 +1,18 @@
+﻿<div class="p-4">
+  <div class="container">
+    <h1>UTP</h1>
+
+    <adn-single-elimination-tree
+      [tournament]="chaveamento"
+      [matchTemplate]="myMatchTemplate"
+    >
+    </adn-single-elimination-tree>
+
+    <ng-template #myMatchTemplate let-match>
+      <app-chaveamento
+        [match]="match"
+        (teamNameClicked)="handleClickEvent($event)"
+      ></app-chaveamento>
+    </ng-template>
+  </div>
+</div>

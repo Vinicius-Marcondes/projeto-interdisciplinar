@@ -1,0 +1,35 @@
+<h1 *ngIf="isAddMode">Adicionar participante</h1>
+<h1 *ngIf="!isAddMode">Editar participante</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label>Nome</label>
+    <input
+      type="text"
+      formControlName="nome"
+      class="form-control"
+      width="100%"
+      [ngClass]="{ 'is-invalid': submitted && f.nome.errors }"
+    />
+    <div *ngIf="submitted && f.nome.errors" class="invalid-feedback">
+      <div *ngIf="f.nome.errors.required">
+        Nome do participante é obrigatório
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <button [disabled]="loading" class="btn btn-primary">
+      <span
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm mr-1"
+      ></span>
+      Salvar
+    </button>
+    <a *ngIf="isAddMode" routerLink="/equipe/" class="btn btn-link">Cancelar</a>
+    <a
+      *ngIf="!isAddMode"
+      routerLink="/equipes/edit/{{ this.id }}"
+      class="btn btn-link"
+      >Cancelar</a
+    >
+  </div>
+</form>
